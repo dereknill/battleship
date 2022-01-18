@@ -1,12 +1,16 @@
 const gameboardFactory = require('./gameboardFactory');
 
-function playerFactory(name, isComputer) {
+function playerFactory() {
   const gameboard = gameboardFactory();
   const shotAttempts = [];
+  let playerName = '';
   function getName() {
-    return name;
+    return playerName;
   }
 
+  function setName(name) {
+    playerName = name;
+  }
   function attemptPlaceShip(length, x, y, isVertical) {
     return gameboard.placeShip(length, x, y, isVertical);
   }
@@ -23,21 +27,13 @@ function playerFactory(name, isComputer) {
     return gameboard.receiveAttack(x, y);
   }
 
-  function attemptAttackComputer() {
-    let x, y;
-    while (true) {
-      x = getRandomInt(1, 11);
-      y = getRandomInt(1, 11);
-
-      if (checkIfAttackable(x, y)) {
-        break;
-      }
-    }
-
-    return attemptReceiveAttack(x, y);
-  }
-
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-  }
+  return {
+    getName,
+    attemptPlaceShip,
+    checkIfAttackable,
+    attemptReceiveAttack,
+    setName,
+  };
 }
+
+module.exports = playerFactory;
