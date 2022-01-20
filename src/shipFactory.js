@@ -1,6 +1,7 @@
 function shipFactory(length, startPosX, startPosY, isVertical) {
   const posArray = [];
 
+  console.log({ length, startPosX, startPosY });
   if (isVertical) {
     for (let i = startPosY; i < startPosY + length; i++) {
       posArray.push({ x: startPosX, y: i, isHit: false });

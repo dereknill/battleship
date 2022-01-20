@@ -1,5 +1,5 @@
-const playerFactory = require('./playerFactory');
-const DOMControllerFactory = require('./DOMControllerFactory');
+const playerFactory = require("./playerFactory");
+const DOMControllerFactory = require("./DOMControllerFactory");
 
 let DOMController = DOMControllerFactory();
 let player = null;
@@ -21,7 +21,7 @@ function gameScreen() {
 
 function gameLoop(playerName) {
   player = playerFactory(playerName);
-  computer = playerFactory('Computer');
+  computer = playerFactory("Computer");
 }
 
 // Event Handlers
@@ -30,70 +30,73 @@ function startGameButtonHandler() {
   DOMController.fadeOut(gameScreen);
 }
 
-function dragShipHandler(e) {}
+function shipDragHandler(e) {}
 
-function dragShipStartHandler(e) {
-  console.log('start draggin');
+function shipDragStartHandler(e) {
+  e.target.style.opacity = 0;
+  e.dataTransfer.effectAllowed = "move";
   //   let img = new Image();
   //   img.src =
   //     'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
   //   e.dataTransfer.setDragImage(img, 0, 0);
 }
 
-function dragShipEndHandler(e) {
-  console.log('on drag end');
+function shipDragEndHandler(e) {
   e.target.style.opacity = 1;
 }
 
-function dragShipOverHandler(e) {
+function shipDragOverHandler(e) {}
+function tileDragoverHandler(e) {
   e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  e.target.style.opacity = 0;
+  e.dataTransfer.dropEffect = "move";
 }
 
-function tileDragoverHandler(e) {}
-
 function tileDropHandler(e) {
-  console.log('dropped on tile');
+  let x = Number(e.target.dataset.x);
+  let y = Number(e.target.dataset.y);
+  let length = Number(DOMController.getCurrentShip().dataset.length);
+  if (
+    player.checkPlaceable(length, x, y, DOMController.placementIsVertical())
+  ) {
+    DOMController.placeShipOnGrid(x, y, DOMController.placementIsVertical());
+    player.attemptPlaceShip(length, x, y, DOMController.placementIsVertical());
+  }
 }
 
 function tileDragEnterHandler(e) {
+  let x = Number(e.target.dataset.x);
+  let y = Number(e.target.dataset.y);
+  let length = Number(DOMController.getCurrentShip().dataset.length);
   if (
-    player.checkPlaceable(
-      DOMController.getCurrentShip().dataset.length,
-      e.target.dataset.x,
-      e.target.dataset.y,
-      DOMController.placementIsVertical()
-    )
+    player.checkPlaceable(length, x, y, DOMController.placementIsVertical())
   ) {
-    e.target.style.background = 'green';
+    e.target.style.background = "green";
   } else {
-    e.target.style.background = 'red';
+    e.target.style.background = "red";
   }
-  console.log(DOMController.getTile(e.target.dataset.x, e.target.dataset.y));
 }
 
 function tileDragExitHandler(e) {
-  e.target.style.background = 'inherit';
+  e.target.style.background = "inherit";
 }
 // Event Handler Attachers
 
 function attachLoadScreenHandlers(button) {
-  button.addEventListener('click', startGameButtonHandler);
+  button.addEventListener("click", startGameButtonHandler);
 }
 
 function attachDragShipHandler(ship) {
-  ship.addEventListener('dragstart', dragShipStartHandler);
-  ship.addEventListener('drag', dragShipHandler);
-  ship.addEventListener('dragend', dragShipEndHandler);
-  ship.addEventListener('dragover', dragShipOverHandler);
+  ship.addEventListener("dragstart", shipDragStartHandler);
+  ship.addEventListener("drag", shipDragHandler);
+  ship.addEventListener("dragend", shipDragEndHandler);
+  ship.addEventListener("dragover", shipDragOverHandler);
 }
 
 function attachTileDragHandler(tileDiv) {
-  tileDiv.addEventListener('dragover', tileDragoverHandler);
-  tileDiv.addEventListener('drop', tileDropHandler);
-  tileDiv.addEventListener('dragenter', tileDragEnterHandler);
-  tileDiv.addEventListener('dragleave', tileDragExitHandler);
+  tileDiv.addEventListener("dragover", tileDragoverHandler);
+  tileDiv.addEventListener("drop", tileDropHandler);
+  tileDiv.addEventListener("dragenter", tileDragEnterHandler);
+  tileDiv.addEventListener("dragleave", tileDragExitHandler);
 }
 setTimeout(startScreen, 300);
 setTimeout(DOMController.fadeInLogo, 300);

@@ -1,4 +1,4 @@
-const shipFactory = require('./shipFactory');
+const shipFactory = require("./shipFactory");
 
 function gameboardFactory() {
   const shipArray = [];
@@ -16,7 +16,7 @@ function gameboardFactory() {
       if (Number(length) + Number(y) > 11) {
         return false;
       } else {
-        for (let i = y; i <= length + y; i++) {
+        for (let i = y; i < length + y; i++) {
           if (!checkAvailable(x, i)) {
             return false;
           }
@@ -26,7 +26,7 @@ function gameboardFactory() {
       if (Number(length) + Number(x) > 11) {
         return false;
       } else {
-        for (let i = x; i <= length + x; i++) {
+        for (let i = x; i < length + x; i++) {
           if (!checkAvailable(i, y)) {
             return false;
           }
