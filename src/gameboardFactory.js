@@ -4,8 +4,16 @@ function gameboardFactory() {
   const shipArray = [];
 
   function placeShip(length, x, y, isVertical) {
+    if (!checkPlaceable(length, x, y, isVertical)) {
+      return false;
+    }
+    shipArray.push(shipFactory(length, x, y, isVertical));
+    return true;
+  }
+
+  function checkPlaceable(length, x, y, isVertical) {
     if (isVertical) {
-      if (length + y > 11) {
+      if (Number(length) + Number(y) > 11) {
         return false;
       } else {
         for (let i = y; i <= length + y; i++) {
@@ -15,7 +23,7 @@ function gameboardFactory() {
         }
       }
     } else {
-      if (length + x > 11) {
+      if (Number(length) + Number(x) > 11) {
         return false;
       } else {
         for (let i = x; i <= length + x; i++) {
@@ -25,8 +33,6 @@ function gameboardFactory() {
         }
       }
     }
-
-    shipArray.push(shipFactory(length, x, y, isVertical));
     return true;
   }
 
@@ -58,7 +64,14 @@ function gameboardFactory() {
     }
     return true;
   }
-  return { placeShip, receiveAttack, allSunk, checkAvailable, placeShip };
+  return {
+    placeShip,
+    receiveAttack,
+    allSunk,
+    checkAvailable,
+    placeShip,
+    checkPlaceable,
+  };
 }
 
 module.exports = gameboardFactory;

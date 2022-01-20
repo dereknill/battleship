@@ -1,20 +1,19 @@
 const gameboardFactory = require('./gameboardFactory');
 
-function playerFactory() {
+function playerFactory(playerName) {
   const gameboard = gameboardFactory();
   const shotAttempts = [];
-  let playerName = '';
   function getName() {
     return playerName;
   }
 
-  function setName(name) {
-    playerName = name;
-  }
   function attemptPlaceShip(length, x, y, isVertical) {
     return gameboard.placeShip(length, x, y, isVertical);
   }
 
+  function checkPlaceable(length, x, y, isVertical) {
+    return gameboard.checkPlaceable(length, x, y, isVertical);
+  }
   function checkIfAttackable(x, y) {
     if (shotAttempts.find((coords) => coords[0] === x && cords[1] === y)) {
       return false;
@@ -32,7 +31,7 @@ function playerFactory() {
     attemptPlaceShip,
     checkIfAttackable,
     attemptReceiveAttack,
-    setName,
+    checkPlaceable,
   };
 }
 
