@@ -1,14 +1,36 @@
 function DOMControllerFactory() {
-  const mainDiv = document.querySelector("main");
+  const mainDiv = document.querySelector('main');
+  const shipImgSrcMap = new Map();
+  shipImgSrcMap.set('Carrier', [
+    'images/shipCarrierHull.png',
+    'images/shipCarrierHullHorizontal.png',
+  ]);
+  shipImgSrcMap.set('Battleship', [
+    'images/shipBattleshipHull.png',
+    'images/shipBattleshipHullHorizontal.png',
+  ]);
+  shipImgSrcMap.set('Destroyer', [
+    'images/shipDestroyerHull.png',
+    'images/shipDestroyerHullHorizontal.png',
+  ]);
+  shipImgSrcMap.set('Submarine', [
+    'images/shipSubmarineHull.png',
+    'images/shipSubmarineHullHorizontal.png',
+  ]);
+  shipImgSrcMap.set('Patrol Boat', [
+    'images/shipPatrolHull.png',
+    'images/shipPatrolHullHorizontal.png',
+  ]);
+
   function loadStartScreen(callback) {
-    let subtitle = document.createElement("h2");
-    let input = document.createElement("input");
-    let button = document.createElement("button");
-    subtitle.textContent = "Enter Player Name:";
-    input.type = "text";
-    input.id = "player-name-input";
-    button.id = "start-game-button";
-    button.textContent = "Start Game";
+    let subtitle = document.createElement('h2');
+    let input = document.createElement('input');
+    let button = document.createElement('button');
+    subtitle.textContent = 'Enter Player Name:';
+    input.type = 'text';
+    input.id = 'player-name-input';
+    button.id = 'start-game-button';
+    button.textContent = 'Start Game';
     mainDiv.appendChild(subtitle);
     mainDiv.appendChild(input);
     mainDiv.appendChild(button);
@@ -21,61 +43,88 @@ function DOMControllerFactory() {
     }
   }
 
-  function loadGameScreen(callback, shipEventCallback, tileEventCallback) {
-    let playerName = document.querySelector("#player-name-input").value;
+  function changeAxis() {
+    let currentShip = getCurrentShip();
+    if (placementIsVertical()) {
+      currentShip.dataset.vertical = 'false';
+      currentShip.src = shipImgSrcMap.get(currentShip.dataset.name)[1];
+    } else {
+      currentShip.dataset.vertical = 'true';
+      currentShip.src = shipImgSrcMap.get(currentShip.dataset.name)[0];
+    }
+  }
+
+  function loadGameScreen(callback, tileEventCallback) {
+    let playerName = document.querySelector('#player-name-input').value;
     clearElement(mainDiv);
-    let gameContainer = document.createElement("div");
-    gameContainer.classList.add("game-container");
-    let infoContainer = document.createElement("div");
-    infoContainer.classList.add("info-container");
+    let gameContainer = document.createElement('div');
+    gameContainer.classList.add('game-container');
+    let infoContainer = document.createElement('div');
+    infoContainer.classList.add('info-container');
     gameContainer.appendChild(infoContainer);
     mainDiv.appendChild(gameContainer);
-    loadShipSelect(shipEventCallback, "carrier", 5);
     drawGrid(tileEventCallback);
     callback(playerName);
   }
 
   function getCurrentShip() {
-    return document.querySelector(".ship-placing");
+    return document.querySelector('.ship-placing');
   }
 
   function placementIsVertical() {
-    return true;
+    let vertical = getCurrentShip().dataset.vertical;
+    if (vertical == 'true') {
+      return true;
+    } else {
+      return false;
+    }
   }
   function loadShipSelect(callback, name, length) {
-    const infoContainer = document.querySelector(".info-container");
-    clearElement("infoContainer");
-    let subtitle = document.createElement("h2");
+    const infoContainer = document.querySelector('.info-container');
+    clearElement(infoContainer);
+    let subtitle = document.createElement('h2');
     subtitle.textContent = `Place your ${name} (drag and drop)`;
-    let shipDiv = document.createElement("img");
-    shipDiv.src = "images/ShipCarrierHull.png";
-    shipDiv.draggable = "true";
-    shipDiv.classList.add("ship-placing");
-
+    let shipRow = document.createElement('div');
+    shipRow.classList.add('ship-row');
+    let axisButton = document.createElement('button');
+    axisButton.textContent = 'Change Axis';
+    axisButton.classList.add('axis-button');
+    let shipDiv = document.createElement('img');
+    shipDiv.src = shipImgSrcMap.get(name)[0];
+    shipDiv.draggable = 'true';
+    shipDiv.classList.add('ship-placing');
+    shipDiv.dataset.vertical = 'true';
     shipDiv.dataset.length = length;
+    shipDiv.dataset.name = name;
 
+    shipRow.appendChild(shipDiv);
+    shipRow.appendChild(axisButton);
     infoContainer.appendChild(subtitle);
-    infoContainer.appendChild(shipDiv);
-    callback(shipDiv);
+    infoContainer.appendChild(shipRow);
+    callback(shipDiv, axisButton);
   }
 
   function placeShipOnGrid(x, y, isVertical) {
     let image = new Image();
     image.src = getCurrentShip().src;
     let tile = getTile(x, y);
-    image.classList.add("centered-ship");
+    if (isVertical) {
+      image.classList.add('centered-ship-vertical');
+    } else {
+      image.classList.add('centered-ship-horizontal');
+    }
 
     tile.appendChild(image);
   }
   function drawGrid(callback) {
-    const gameContainer = document.querySelector(".game-container");
-    let grid = document.createElement("div");
-    grid.classList.add("grid");
+    const gameContainer = document.querySelector('.game-container');
+    let grid = document.createElement('div');
+    grid.classList.add('grid');
 
     for (let y = 10; y > 0; y--) {
       for (let x = 1; x < 11; x++) {
-        let tile = document.createElement("div");
-        tile.classList.add("tile");
+        let tile = document.createElement('div');
+        tile.classList.add('tile');
         tile.dataset.x = x;
         tile.dataset.y = y;
         callback(tile);
@@ -120,7 +169,7 @@ function DOMControllerFactory() {
     }, 50);
   }
   function fadeInLogo() {
-    const logoDiv = document.querySelector("header");
+    const logoDiv = document.querySelector('header');
     let opacity = 0.0;
     logoDiv.style.opacity = opacity;
     let timer = setInterval(() => {
@@ -137,10 +186,12 @@ function DOMControllerFactory() {
     fadeInLogo,
     fadeOut,
     loadGameScreen,
+    loadShipSelect,
     getCurrentShip,
     placementIsVertical,
     getTile,
     placeShipOnGrid,
+    changeAxis,
   };
 }
 

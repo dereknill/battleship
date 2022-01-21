@@ -13,7 +13,7 @@ html {
 body {
   height: 100%;
   background: linear-gradient(to right, #031a2e, #064273, #031a2e);
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1rem;
   color: #def3f6;
 }
@@ -112,10 +112,33 @@ h2 {
   cursor: dragging;
 }
 
-.centered-ship {
+.centered-ship-vertical {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translate(-50%, 0);
   pointer-events: none;
+  z-index: 1;
+}
+
+.centered-ship-horizontal {
+  position: absolute;
+  bottom: 50%;
+  left: 0;
+  transform: translate(0, 50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ship-row {
+  width: 400px;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: 190px;
+  align-items: center;
+}
+
+.axis-button {
+  height: 40px;
 }
