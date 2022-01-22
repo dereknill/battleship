@@ -151,6 +151,7 @@ h2 {
   grid-template-columns: 70% 30%;
   align-items: center;
   height: 190px;
+  padding: 0 20px;
 }
 
 @media screen and (max-width: 600px) {
