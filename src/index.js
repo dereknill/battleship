@@ -136,12 +136,21 @@ function shipTouchEndHandler(event) {
   let touch = event.changedTouches[0];
   let currentShip = DOMController.getCurrentShip();
   let bottomElement = document.elementFromPoint(touch.pageX, touch.pageY);
-
-  if (!tileDrop(bottomElement)) {
-    currentShip.style.position = "relative";
-    currentShip.style.left = "auto";
-    currentShip.style.bottom = "auto";
+  if (bottomElement.classList.contains("tile")) {
+    if (tileDrop(bottomElement)) {
+      return;
+    }
   }
+  currentShip.style.position = "relative";
+  currentShip.style.left = "auto";
+  currentShip.style.bottom = "auto";
+}
+
+function shipTouchCancelHandler(event) {
+  let currentShip = DOMController.getCurrentShip();
+  currentShip.style.position = "relative";
+  currentShip.style.left = "auto";
+  currentShip.style.bottom = "auto";
 }
 
 // Event Handler Attachers
@@ -159,6 +168,7 @@ function attachPlacementHandlers(ship, axisButton) {
     ship.addEventListener("touchstart", shipTouchStartHandler);
     ship.addEventListener("touchmove", shipTouchMoveHandler);
     ship.addEventListener("touchend", shipTouchEndHandler);
+    ship.addEventListener("touchcancel", shipTouchCancelHandler);
   } else {
     ship.addEventListener("dragstart", shipDragStartHandler);
     ship.addEventListener("drag", shipDragHandler);
