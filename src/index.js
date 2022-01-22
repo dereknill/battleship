@@ -4,6 +4,7 @@ const DOMControllerFactory = require("./DOMControllerFactory");
 let DOMController = DOMControllerFactory();
 let player = null;
 let computer = null;
+let lastTouchedTile = null;
 let ships = [
   { name: "Carrier", length: 5 },
   { name: "Battleship", length: 4 },
@@ -46,6 +47,22 @@ function selectShipScreen() {
     );
   }
 }
+
+function tileDrop(tileElement) {
+  let x = Number(tileElement.dataset.x);
+  let y = Number(tileElement.dataset.y);
+  tileElement.style.background = "inherit";
+  let length = Number(DOMController.getCurrentShip().dataset.length);
+  if (
+    player.checkPlaceable(length, x, y, DOMController.placementIsVertical())
+  ) {
+    DOMController.placeShipOnGrid(x, y, DOMController.placementIsVertical());
+    player.attemptPlaceShip(length, x, y, DOMController.placementIsVertical());
+    selectShipScreen();
+    return true;
+  }
+  return false;
+}
 // Event Handlers
 
 function startGameButtonHandler() {
@@ -77,17 +94,7 @@ function tileDragoverHandler(e) {
 }
 
 function tileDropHandler(e) {
-  let x = Number(e.target.dataset.x);
-  let y = Number(e.target.dataset.y);
-  e.target.style.background = "inherit";
-  let length = Number(DOMController.getCurrentShip().dataset.length);
-  if (
-    player.checkPlaceable(length, x, y, DOMController.placementIsVertical())
-  ) {
-    DOMController.placeShipOnGrid(x, y, DOMController.placementIsVertical());
-    player.attemptPlaceShip(length, x, y, DOMController.placementIsVertical());
-    selectShipScreen();
-  }
+  tileDrop(e.target);
 }
 
 function tileDragEnterHandler(e) {
@@ -125,11 +132,18 @@ function shipTouchMoveHandler(event) {
 }
 
 function shipTouchEndHandler(event) {
+  event.preventDefault();
+  let touch = event.changedTouches[0];
   let currentShip = DOMController.getCurrentShip();
-  currentShip.style.position = "relative";
-  currentShip.style.left = "auto";
-  currentShip.style.bottom = "auto";
+  let bottomElement = document.elementFromPoint(touch.pageX, touch.pageY);
+
+  if (!tileDrop(bottomElement)) {
+    currentShip.style.position = "relative";
+    currentShip.style.left = "auto";
+    currentShip.style.bottom = "auto";
+  }
 }
+
 // Event Handler Attachers
 
 function attachLoadScreenHandlers(button) {
@@ -144,8 +158,7 @@ function attachPlacementHandlers(ship, axisButton) {
   ) {
     ship.addEventListener("touchstart", shipTouchStartHandler);
     ship.addEventListener("touchmove", shipTouchMoveHandler);
-    document.removeEve;
-    document.addEventListener("touchend", shipTouchEndHandler);
+    ship.addEventListener("touchend", shipTouchEndHandler);
   } else {
     ship.addEventListener("dragstart", shipDragStartHandler);
     ship.addEventListener("drag", shipDragHandler);
@@ -157,10 +170,18 @@ function attachPlacementHandlers(ship, axisButton) {
 }
 
 function attachTileDragHandler(tileDiv) {
-  tileDiv.addEventListener("dragover", tileDragoverHandler);
-  tileDiv.addEventListener("drop", tileDropHandler);
-  tileDiv.addEventListener("dragenter", tileDragEnterHandler);
-  tileDiv.addEventListener("dragleave", tileDragExitHandler);
+  if (
+    !(
+      "ontouchstart" in window &&
+      navigator.maxTouchPoints > 0 &&
+      navigator.msMaxTouchPoints > 0
+    )
+  ) {
+    tileDiv.addEventListener("dragover", tileDragoverHandler);
+    tileDiv.addEventListener("drop", tileDropHandler);
+    tileDiv.addEventListener("dragenter", tileDragEnterHandler);
+    tileDiv.addEventListener("dragleave", tileDragExitHandler);
+  }
 }
 setTimeout(startScreen, 300);
 setTimeout(DOMController.fadeInLogo, 300);
