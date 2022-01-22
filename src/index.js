@@ -14,9 +14,11 @@ let ships = [
 ];
 let shipToSelect = -1;
 
-function startScreen() {
-  DOMController.loadStartScreen(attachLoadScreenHandlers);
-  DOMController.fadeIn();
+async function startScreen() {
+  let button = DOMController.loadStartScreen();
+
+  await DOMController.fadeIn();
+  attachLoadScreenHandlers(button);
 }
 
 function gameScreen() {
@@ -65,8 +67,9 @@ function tileDrop(tileElement) {
 }
 // Event Handlers
 
-function startGameButtonHandler() {
+function startGameButtonHandler(event) {
   DOMController.fadeOut(gameScreen);
+  event.target.removeEventListener("click", startGameButtonHandler);
 }
 
 function shipDragHandler(e) {}

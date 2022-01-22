@@ -22,7 +22,7 @@ function DOMControllerFactory() {
     "images/PatrolHorizontal.png",
   ]);
 
-  function loadStartScreen(callback) {
+  function loadStartScreen() {
     let subtitle = document.createElement("h2");
     let input = document.createElement("input");
     let button = document.createElement("button");
@@ -34,7 +34,7 @@ function DOMControllerFactory() {
     mainDiv.appendChild(subtitle);
     mainDiv.appendChild(input);
     mainDiv.appendChild(button);
-    callback(button);
+    return button;
   }
 
   function clearElement(el) {
@@ -144,16 +144,19 @@ function DOMControllerFactory() {
       }
     }
   }
-  function fadeIn(callback) {
+  async function fadeIn() {
     let opacity = 0.0;
     mainDiv.style.opacity = opacity;
-    let timer = setInterval(() => {
-      if (opacity >= 1) {
-        clearInterval(timer);
-      }
-      opacity += 0.05;
-      mainDiv.style.opacity = opacity;
-    }, 50);
+    return new Promise(function (resolve) {
+      let timer = setInterval(() => {
+        if (opacity >= 1) {
+          clearInterval(timer);
+          resolve(true);
+        }
+        opacity += 0.05;
+        mainDiv.style.opacity = opacity;
+      }, 50);
+    });
   }
 
   function fadeOut(callback) {
