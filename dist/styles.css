@@ -13,7 +13,7 @@ html {
 body {
   height: 100%;
   background: linear-gradient(to right, #031a2e, #064273, #031a2e);
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 1rem;
   color: #def3f6;
 }
@@ -33,18 +33,24 @@ header {
 }
 
 header img {
-  width: 60vw;
+  width: 40vw;
   max-width: 400px;
 }
 
 h2 {
-  font-size: 2.5em;
+  font-size: 1.5em;
   margin-bottom: 10px;
 }
 
 @media screen and (max-width: 600px) {
   h2 {
-    font-size: 1.5em;
+    font-size: 1em;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  h2 {
+    font-size: 0.7em;
   }
 }
 
@@ -79,6 +85,8 @@ h2 {
 .grid {
   width: 350px;
   height: 350px;
+  max-width: 95vw;
+  max-height: 95vw;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
 }
@@ -104,10 +112,10 @@ h2 {
   height: 250px;
 }
 
-.ship-container {
-  background-color: red;
-  display: flex;
-  justify-content: center;
+@media screen and (max-width: 600px) {
+  .info-container {
+    height: 210px;
+  }
 }
 
 .ship-container img {
@@ -137,14 +145,21 @@ h2 {
 }
 
 .ship-row {
-  width: 400px;
-  max-width: 100%;
+  width: 350px;
+  max-width: 95vw;
   display: flex;
-  justify-content: space-between;
+  position: relative;
   height: 190px;
   align-items: center;
 }
 
+@media screen and (max-width: 600px) {
+  .ship-row {
+    height: 165px;
+  }
+}
 .axis-button {
+  position: absolute;
   height: 40px;
+  right: 5px;
 }
