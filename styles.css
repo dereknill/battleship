@@ -149,6 +149,7 @@ h2 {
   display: grid;
   max-width: 95vw;
   grid-template-columns: 70% 30%;
+  align-items: center;
   height: 190px;
 }
 
