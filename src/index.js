@@ -116,10 +116,10 @@ function shipTouchStartHandler(e) {}
 
 function shipTouchMoveHandler(event) {
   let touch = event.targetTouches[0];
-
   event.target.style.position = "absolute";
-  event.target.style.left = touch.pageX + "px";
-  event.target.style.top = touch.pageY + "px";
+  event.target.style.left = touch.pageX - event.target.width / 2 + "px";
+  event.target.style.bottom =
+    document.body.clientHeight - touch.pageY - 17.5 + "px";
 
   event.preventDefault();
 }
@@ -128,7 +128,7 @@ function shipTouchEndHandler(event) {
   let currentShip = DOMController.getCurrentShip();
   currentShip.style.position = "relative";
   currentShip.style.left = "auto";
-  currentShip.style.top = "auto";
+  currentShip.style.bottom = "auto";
 }
 // Event Handler Attachers
 
