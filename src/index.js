@@ -136,11 +136,14 @@ function shipTouchEndHandler(event) {
   let touch = event.changedTouches[0];
   let currentShip = DOMController.getCurrentShip();
   let bottomElement = document.elementFromPoint(touch.pageX, touch.pageY);
-  if (bottomElement.classList.contains("tile")) {
-    if (tileDrop(bottomElement)) {
-      return;
+  if (bottomElement != null) {
+    if (bottomElement.classList.contains("tile")) {
+      if (tileDrop(bottomElement)) {
+        return;
+      }
     }
   }
+
   currentShip.style.position = "relative";
   currentShip.style.left = "auto";
   currentShip.style.bottom = "auto";
