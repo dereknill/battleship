@@ -1,4 +1,4 @@
-function shipFactory(length, startPosX, startPosY, isVertical) {
+function shipFactory(length, startPosX, startPosY, isVertical, name) {
   const posArray = [];
 
   console.log({ length, startPosX, startPosY });
@@ -14,9 +14,10 @@ function shipFactory(length, startPosX, startPosY, isVertical) {
 
   function hit(x, y) {
     const pos = posArray.find((element) => {
-      return element.x === x && element.y === y;
+      return element.x == x && element.y == y;
     });
     if (pos == undefined) {
+      console.log(`${name} not hit as ${x} ${y}`);
       return false;
     }
     pos.isHit = true;
@@ -43,7 +44,16 @@ function shipFactory(length, startPosX, startPosY, isVertical) {
     }
     return false;
   }
-  return { hit, isSunk, checkAvailable };
+  return {
+    hit,
+    isSunk,
+    checkAvailable,
+    startPosX,
+    startPosY,
+    isVertical,
+    length,
+    name,
+  };
 }
 
 module.exports = shipFactory;

@@ -1,13 +1,13 @@
-const shipFactory = require("./shipFactory");
+const shipFactory = require('./shipFactory');
 
 function gameboardFactory() {
   const shipArray = [];
 
-  function placeShip(length, x, y, isVertical) {
+  function placeShip(length, x, y, isVertical, name) {
     if (!checkPlaceable(length, x, y, isVertical)) {
       return false;
     }
-    shipArray.push(shipFactory(length, x, y, isVertical));
+    shipArray.push(shipFactory(length, x, y, isVertical, name));
     return true;
   }
 
@@ -64,6 +64,10 @@ function gameboardFactory() {
     }
     return true;
   }
+
+  function getShips() {
+    return shipArray;
+  }
   return {
     placeShip,
     receiveAttack,
@@ -71,6 +75,7 @@ function gameboardFactory() {
     checkAvailable,
     placeShip,
     checkPlaceable,
+    getShips,
   };
 }
 

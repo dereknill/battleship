@@ -22,7 +22,22 @@ function DOMControllerFactory() {
     'images/PatrolHorizontal.png',
   ]);
 
+  function gameover(winner, callback) {
+    let infoContainer = document.querySelector('.info-container');
+    let winnerText = document.createElement('h2');
+    clearElement(infoContainer);
+
+    winnerText.textContent = `${winner} has won!`;
+
+    let playAgainButton = document.createElement('button');
+    playAgainButton.textContent = 'Play Again';
+
+    infoContainer.appendChild(winnerText);
+    infoContainer.appendChild(playAgainButton);
+    callback(playAgainButton);
+  }
   function loadStartScreen() {
+    clearElement(mainDiv);
     let subtitle = document.createElement('h2');
     let input = document.createElement('input');
     let button = document.createElement('button');
@@ -45,12 +60,15 @@ function DOMControllerFactory() {
 
   function changeAxis() {
     let currentShip = getCurrentShip();
+    let axisButton = document.querySelector('.axis-button');
     if (placementIsVertical()) {
       currentShip.dataset.vertical = 'false';
       currentShip.src = shipImgSrcMap.get(currentShip.dataset.name)[1];
+      axisButton.textContent = 'Axis: X';
     } else {
       currentShip.dataset.vertical = 'true';
       currentShip.src = shipImgSrcMap.get(currentShip.dataset.name)[0];
+      axisButton.textContent = 'Axis: Y';
     }
   }
 
@@ -64,6 +82,7 @@ function DOMControllerFactory() {
     let gridsContainer = document.createElement('div');
     gridsContainer.classList.add('grids-container');
     let grid = drawGrid(tileEventCallback);
+    grid.classList.add('player-grid');
     gridsContainer.appendChild(grid);
     gameContainer.appendChild(infoContainer);
     gameContainer.appendChild(gridsContainer);
@@ -92,7 +111,7 @@ function DOMControllerFactory() {
     let shipRow = document.createElement('div');
     shipRow.classList.add('ship-row');
     let axisButton = document.createElement('button');
-    axisButton.textContent = 'Change Axis';
+    axisButton.textContent = 'Axis: Y';
     axisButton.classList.add('axis-button');
     let shipDiv = document.createElement('img');
     shipDiv.src = shipImgSrcMap.get(name)[0];
@@ -109,6 +128,19 @@ function DOMControllerFactory() {
     callback(shipDiv, axisButton);
   }
 
+  function tileHit(x, y, isPlayer) {
+    let tile = getTile(x, y, isPlayer);
+    let hitMarker = document.createElement('div');
+    hitMarker.classList.add('tile-hit');
+    tile.appendChild(hitMarker);
+  }
+
+  function tileMiss(x, y, isPlayer) {
+    let tile = getTile(x, y, isPlayer);
+    let missMarker = document.createElement('div');
+    missMarker.classList.add('tile-miss');
+    tile.appendChild(missMarker);
+  }
   function setGameLoopScreen(computerTileEventAttacher) {
     let gridsContainer = document.querySelector('.grids-container');
     let infoContainer = document.querySelector('.info-container');
@@ -116,14 +148,22 @@ function DOMControllerFactory() {
     clearElement(infoContainer);
     infoContainer.style.height = '100px';
     let playerGrid = drawGrid();
-    let computerGrid = drawGrid();
+    let computerGrid = drawGrid(computerTileEventAttacher);
+    let playerGridTitle = document.createElement('h3');
+    let computerGridTitle = document.createElement('h3');
+    playerGridTitle.textContent = 'Friendly Water';
+    computerGridTitle.textContent = 'Enemy Water';
 
     let playerGridContainer = document.createElement('div');
     let computerGridContainer = document.createElement('div');
+    playerGridContainer.classList.add('player-grid-container');
+    computerGridContainer.classList.add('computer-grid-container');
     playerGrid.classList.add('player-grid');
+    playerGridContainer.appendChild(playerGridTitle);
     playerGridContainer.appendChild(playerGrid);
 
     computerGrid.classList.add('computer-grid');
+    computerGridContainer.appendChild(computerGridTitle);
     computerGridContainer.appendChild(computerGrid);
     gridsContainer.appendChild(computerGridContainer);
     gridsContainer.appendChild(playerGridContainer);
@@ -131,10 +171,25 @@ function DOMControllerFactory() {
   function placeShipOnGrid(x, y, isVertical) {
     let image = new Image();
     image.src = getCurrentShip().src;
-    let tile = getTile(x, y);
+    let tile = getTile(x, y, true);
     if (isVertical) {
       image.classList.add('centered-ship-vertical');
     } else {
+      image.classList.add('centered-ship-horizontal');
+    }
+
+    tile.appendChild(image);
+  }
+
+  function placeShipOnGridGameLoop(ship) {
+    console.log(ship);
+    let image = new Image();
+    let tile = getTile(ship.startPosX, ship.startPosY);
+    if (ship.isVertical) {
+      image.src = shipImgSrcMap.get(ship.name)[0];
+      image.classList.add('centered-ship-vertical');
+    } else {
+      image.src = shipImgSrcMap.get(ship.name)[1];
       image.classList.add('centered-ship-horizontal');
     }
 
@@ -160,9 +215,18 @@ function DOMControllerFactory() {
     return grid;
   }
 
-  function getTile(x, y) {
-    let nodeList = document.querySelectorAll(`[data-x="${x}"]`);
-    let array = Array.from(nodeList);
+  function getTile(x, y, isPlayer = true) {
+    let array = [];
+    let nodeList = null;
+    if (isPlayer) {
+      let playerGrid = document.querySelector('.player-grid');
+      nodeList = playerGrid.querySelectorAll(`[data-x="${x}"]`);
+    } else {
+      let computerGrid = document.querySelector('.computer-grid');
+      nodeList = computerGrid.querySelectorAll(`[data-x="${x}"]`);
+    }
+
+    array = Array.from(nodeList);
     for (let i = 0; i < array.length; i++) {
       if (array[i].dataset.y == y) {
         return array[i];
@@ -222,6 +286,10 @@ function DOMControllerFactory() {
     changeAxis,
     setGameLoopScreen,
     clearElement,
+    placeShipOnGridGameLoop,
+    tileHit,
+    tileMiss,
+    gameover,
   };
 }
 

@@ -1,9 +1,11 @@
 const playerFactory = require('./playerFactory');
 const DOMControllerFactory = require('./DOMControllerFactory');
+const ComputerController = require('./computerController');
 
 let DOMController = DOMControllerFactory();
 let player = null;
 let computer = null;
+let computerController = null;
 let ships = [
   { name: 'Carrier', length: 5 },
   { name: 'Battleship', length: 4 },
@@ -25,8 +27,22 @@ function gameScreen() {
   DOMController.fadeIn();
 }
 
-function gameLoop() {}
+function computerAttack() {
+  const attackInfo = computerController.attemptAttack();
+  console.log(attackInfo);
+  if (attackInfo.success) {
+    DOMController.tileHit(attackInfo.x, attackInfo.y, true);
+  } else {
+    DOMController.tileMiss(attackInfo.x, attackInfo.y, true);
+  }
+  if (checkWinner()) {
+    gameoverHandler();
+  }
+}
 
+function checkWinner() {
+  return player.allSunk() || computer.allSunk;
+}
 function boardCreated(playerName) {
   player = playerFactory(playerName);
   computer = playerFactory('Computer');
@@ -34,7 +50,13 @@ function boardCreated(playerName) {
 }
 
 function setBoard() {
-  DOMController.setGameLoopScreen();
+  DOMController.setGameLoopScreen(attachTileGameClickHandler);
+  let ships = player.getShips();
+  ships.forEach((ship) => {
+    DOMController.placeShipOnGridGameLoop(ship);
+  });
+  computerController = new ComputerController(computer, player, ships);
+  computerController.placeShips();
   DOMController.fadeIn();
 }
 function selectShipScreen() {
@@ -56,11 +78,18 @@ function tileDrop(tileElement) {
   let y = Number(tileElement.dataset.y);
   tileElement.style.background = 'inherit';
   let length = Number(DOMController.getCurrentShip().dataset.length);
+  let name = DOMController.getCurrentShip().dataset.name;
   if (
     player.checkPlaceable(length, x, y, DOMController.placementIsVertical())
   ) {
     DOMController.placeShipOnGrid(x, y, DOMController.placementIsVertical());
-    player.attemptPlaceShip(length, x, y, DOMController.placementIsVertical());
+    player.attemptPlaceShip(
+      length,
+      x,
+      y,
+      DOMController.placementIsVertical(),
+      name
+    );
     selectShipScreen();
     return true;
   }
@@ -68,6 +97,23 @@ function tileDrop(tileElement) {
 }
 // Event Handlers
 
+function restartGame() {
+  player = null;
+  computer = null;
+  computerController = null;
+  shipToSelect = -1;
+  startScreen();
+}
+function gameoverHandler() {
+  let computerWon = player.allSunk();
+  let playerWon = computer.allSunk();
+
+  if (computerWon) {
+    DOMController.gameover('Computer', attachPlayAgainHandler);
+  } else if (playerWon) {
+    DOMController.gameover(player.getName(), attachPlayAgainHandler);
+  }
+}
 function startGameButtonHandler(event) {
   DOMController.fadeOut(gameScreen);
   event.target.removeEventListener('click', startGameButtonHandler);
@@ -128,9 +174,14 @@ function shipTouchStartHandler(e) {}
 function shipTouchMoveHandler(event) {
   let touch = event.targetTouches[0];
   event.target.style.position = 'absolute';
-  event.target.style.left = touch.pageX - event.target.width / 2 + 'px';
-  event.target.style.bottom =
-    document.body.clientHeight - touch.pageY - 17.5 + 'px';
+  if (DOMController.placementIsVertical()) {
+    event.target.style.left = touch.pageX - event.target.width / 2 + 'px';
+    event.target.style.bottom =
+      document.body.clientHeight - touch.pageY - 17.5 + 'px';
+  } else {
+    event.target.style.top = touch.pageY - event.target.height / 2 + 'px';
+    event.target.style.left = touch.pageX - 17.5 + 'px';
+  }
 
   event.preventDefault();
 }
@@ -151,6 +202,7 @@ function shipTouchEndHandler(event) {
   currentShip.style.position = 'relative';
   currentShip.style.left = 'auto';
   currentShip.style.bottom = 'auto';
+  currentShip.style.top = 'auto';
 }
 
 function shipTouchCancelHandler(event) {
@@ -158,6 +210,25 @@ function shipTouchCancelHandler(event) {
   currentShip.style.position = 'relative';
   currentShip.style.left = 'auto';
   currentShip.style.bottom = 'auto';
+  currentShip.style.top = 'auto';
+}
+
+function tileGameClickHandler(event) {
+  let x = event.target.dataset.x;
+  let y = event.target.dataset.y;
+
+  let success = computer.attemptReceiveAttack(x, y);
+  if (success) {
+    DOMController.tileHit(x, y, false);
+  } else {
+    DOMController.tileMiss(x, y, false);
+  }
+
+  event.target.removeEventListener('click', tileGameClickHandler);
+  if (checkWinner()) {
+    gameoverHandler();
+  }
+  computerAttack();
 }
 
 // Event Handler Attachers
@@ -200,5 +271,16 @@ function attachTileDragHandler(tileDiv) {
     tileDiv.addEventListener('dragleave', tileDragExitHandler);
   }
 }
+
+function attachTileGameClickHandler(tileDiv) {
+  tileDiv.addEventListener('click', tileGameClickHandler);
+}
+
+function attachPlayAgainHandler(button) {
+  button.addEventListener('click', restartGame);
+}
+
+// On Load
+
 setTimeout(startScreen, 300);
 setTimeout(DOMController.fadeInLogo, 300);

@@ -82,6 +82,16 @@ h2 {
   background-color: #1da2d8;
 }
 
+button {
+  margin: 10px 0;
+  padding: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: #7fcdff;
+  box-shadow: 0 0 3px black;
+  border-radius: 5px;
+}
+
 .grid {
   width: 350px;
   height: 350px;
@@ -96,6 +106,25 @@ h2 {
   height: 100%;
   border: 1px solid #def3f6;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tile-miss {
+  width: 75%;
+  height: 75%;
+  background-color: white;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.tile-hit {
+  width: 75%;
+  height: 75%;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 2;
 }
 
 .game-container {
@@ -171,23 +200,36 @@ h2 {
   justify-content: center;
 }
 
-.player-grid {
+.player-grid-container {
   margin-left: 30px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.computer-grid-container {
+  margin-right: 30px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.player-grid {
 }
 
 .computer-grid {
-  margin-right: 30px;
 }
 
 @media screen and (max-width: 800px) {
-  .player-grid {
+  .player-grid-container {
     margin: 0;
+    margin-top: 20px;
   }
-  .computer-grid {
+  .computer-grid-container {
     margin: 0;
   }
   .grids-container {
     width: 100%;
     flex-direction: column;
+    align-items: center;
   }
 }
