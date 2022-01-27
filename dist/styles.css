@@ -13,7 +13,7 @@ html {
 body {
   height: 100%;
   background: linear-gradient(to right, #031a2e, #064273, #031a2e);
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 1rem;
   color: #def3f6;
 }
@@ -70,6 +70,7 @@ h2 {
 
 #start-game-button {
   margin: 10px 0;
+  color: black;
   padding: 5px;
   font-size: 1.5em;
   font-weight: bold;
@@ -84,6 +85,7 @@ h2 {
 
 button {
   margin: 10px 0;
+  color: black;
   padding: 5px;
   font-size: 1em;
   font-weight: bold;
@@ -92,6 +94,9 @@ button {
   border-radius: 5px;
 }
 
+button:hover {
+  background-color: #1da2d8;
+}
 .grid {
   width: 350px;
   height: 350px;
@@ -214,15 +219,16 @@ button {
   flex-direction: column;
 }
 .player-grid {
+  margin-top: 10px;
 }
 
 .computer-grid {
+  margin-top: 10px;
 }
 
 @media screen and (max-width: 800px) {
   .player-grid-container {
-    margin: 0;
-    margin-top: 20px;
+    margin: 20px 0;
   }
   .computer-grid-container {
     margin: 0;

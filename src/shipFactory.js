@@ -17,7 +17,6 @@ function shipFactory(length, startPosX, startPosY, isVertical, name) {
       return element.x == x && element.y == y;
     });
     if (pos == undefined) {
-      console.log(`${name} not hit as ${x} ${y}`);
       return false;
     }
     pos.isHit = true;
