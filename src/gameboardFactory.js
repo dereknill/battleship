@@ -37,14 +37,15 @@ function gameboardFactory() {
   }
 
   function receiveAttack(x, y) {
-    let success = false;
+    let result = false;
     for (let i = 0; i < shipArray.length; i++) {
-      if (shipArray[i].hit(x, y)) {
-        success = true;
+      let hitInfo = shipArray[i].hit(x, y);
+      if (hitInfo) {
+        result = hitInfo;
         break;
       }
     }
-    return success;
+    return result;
   }
 
   function allSunk() {

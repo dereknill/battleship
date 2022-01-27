@@ -15,10 +15,10 @@ class ComputerController {
         break;
       }
     }
-    let success = null;
-    let attackInfo = { x, y, success };
+    let ship = null;
+    let attackInfo = { x, y, ship };
     console.log(attackInfo);
-    attackInfo.success = this.player.attemptReceiveAttack(x, y);
+    attackInfo.ship = this.player.attemptReceiveAttack(x, y);
     return attackInfo;
   }
 
@@ -41,9 +41,7 @@ class ComputerController {
             isVertical,
             ship.name
           );
-          console.log(
-            `Placed ship at: ${x} ${y} with length of ${ship.length}`
-          );
+
           break;
         }
       }

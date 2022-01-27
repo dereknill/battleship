@@ -1,7 +1,6 @@
 function shipFactory(length, startPosX, startPosY, isVertical, name) {
   const posArray = [];
 
-  console.log({ length, startPosX, startPosY });
   if (isVertical) {
     for (let i = startPosY; i < startPosY + length; i++) {
       posArray.push({ x: startPosX, y: i, isHit: false });
@@ -20,7 +19,7 @@ function shipFactory(length, startPosX, startPosY, isVertical, name) {
       return false;
     }
     pos.isHit = true;
-    return true;
+    return this;
   }
 
   function isSunk() {
