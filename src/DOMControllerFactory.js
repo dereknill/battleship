@@ -27,13 +27,16 @@ function DOMControllerFactory() {
     let winnerText = document.createElement("h2");
     clearElement(infoContainer);
 
+    infoContainer.style.flexDirection = "row";
     winnerText.textContent = `${winner} has won!`;
+    winnerText.style.marginRight = "15px";
 
     let playAgainButton = document.createElement("button");
     playAgainButton.textContent = "Play Again";
 
     infoContainer.appendChild(winnerText);
     infoContainer.appendChild(playAgainButton);
+
     callback(playAgainButton);
   }
   function loadStartScreen() {

@@ -43,7 +43,6 @@ class ComputerController {
       ];
 
       this.shuffleArray(possibleShots);
-      console.log(possibleShots);
 
       for (let j = 0; j < possibleShots.length; j++) {
         if (
