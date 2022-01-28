@@ -51,6 +51,7 @@ function shipFactory(length, startPosX, startPosY, isVertical, name) {
     isVertical,
     length,
     name,
+    posArray,
   };
 }
 
