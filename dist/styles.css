@@ -33,6 +33,12 @@ header {
   opacity: 1;
 }
 
+@media screen and (max-width: 600px) {
+  header {
+    padding: 0;
+    padding-top: 5px;
+  }
+}
 .logo-text {
   font-size: 4em;
   font-family: "Special Elite", serif;
