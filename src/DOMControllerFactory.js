@@ -39,11 +39,13 @@ function DOMControllerFactory() {
   function loadStartScreen() {
     clearElement(mainDiv);
     let subtitle = document.createElement("h2");
+    subtitle.style.marginTop = "30px";
     let input = document.createElement("input");
     let button = document.createElement("button");
     subtitle.textContent = "Enter Player Name:";
     input.type = "text";
     input.id = "player-name-input";
+    input.maxLength = "20";
     button.id = "start-game-button";
     button.textContent = "Start Game";
     mainDiv.appendChild(subtitle);
@@ -188,9 +190,12 @@ function DOMControllerFactory() {
   function setGameLoopScreen(computerTileEventAttacher) {
     let gridsContainer = document.querySelector(".grids-container");
     let infoContainer = document.querySelector(".info-container");
+    let header = document.querySelector("header");
+    header.style.paddingBottom = "15px";
     clearElement(gridsContainer);
     clearElement(infoContainer);
-    infoContainer.style.height = "100px";
+    infoContainer.style.height = "50px";
+    infoContainer.style.padding = "0 20px";
     let playerGrid = drawGrid();
     let computerGrid = drawGrid(computerTileEventAttacher);
     let playerGridTitle = document.createElement("h3");
