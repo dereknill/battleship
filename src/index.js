@@ -16,10 +16,6 @@ let ships = [
 ];
 let shipToSelect = -1;
 
-window.addEventListener("touchmove", function (event) {
-  event.preventDefault();
-});
-
 async function startScreen() {
   let button = DOMController.loadStartScreen();
 

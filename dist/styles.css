@@ -9,6 +9,7 @@
 }
 html {
   height: 100%;
+  touch-action: pan-down;
 }
 body {
   height: 100%;
